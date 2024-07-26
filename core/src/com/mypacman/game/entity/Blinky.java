@@ -19,7 +19,7 @@ public class Blinky extends Entity {
 		if (!isScared && !scatter)
 			super.update(pacman.getLocation(), 0);
 		else if (!scatter)
-			super.update(new Vector2(0, 0), 0);
+			super.update(new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), 0);
 		else if (scatter)
 			super.update(new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()),0);
 	}

@@ -25,6 +25,7 @@ public class Player {
 	private int sx, sy;
 	private int pelletsCollected = 0;
 	private int ghostKillCount = 0;
+	private int score = 0;
 
 	public Player(Pacman app, TileGrid grid, TextureAtlas pacmanAtlas, int x, int y, float w, float h, float[] offset) {
 		this.app = app;
@@ -197,7 +198,11 @@ public class Player {
 	}
 	
 	public int getScore() {
-		return pelletsCollected*10 + ghostKillCount*200;
+		return pelletsCollected*10 + ghostKillCount*200 + score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public Tile getTileAhead(int distance) {

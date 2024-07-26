@@ -41,7 +41,9 @@ public class MainScreen implements Screen {
 	private long time2 = 0;
 	private long time3 = 0;
 	private boolean debugSwitch = false;
-	private int remainingLives = 5;
+	private int remainingLives = 3;
+	private int livesSave = 3;
+	private int scoreOffset = 0;
 
 	public MainScreen(Pacman app) {
 		this.app = app;
@@ -77,7 +79,7 @@ public class MainScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		// update ghosts and player
-		if(!won) {
+		if (!won && !gameOver) {
 			pacman.update(this);
 		}
 		if (ready && !won) {
@@ -132,7 +134,7 @@ public class MainScreen implements Screen {
 		app.renderer.setProjectionMatrix(camera.combined);
 		app.renderer.begin(ShapeType.Filled);
 		if (showDebugTiles)
-			grid.render(app.renderer, 30, 100);
+			grid.render(app.renderer, 30, 130);
 		app.renderer.end();
 
 		// draw sprites
@@ -151,14 +153,18 @@ public class MainScreen implements Screen {
 			clyde.render(app.batch, pacman, System.currentTimeMillis() - time2);
 		}
 
-		if (!ready && !gameOver)
+		if (!ready && !gameOver) {
+			app.bigUIFont.setColor(Color.YELLOW);
 			app.bigUIFont.draw(app.batch, "Ready!", Gdx.graphics.getWidth() / 2 - 25f, Gdx.graphics.getHeight() / 2, 50,
 					Align.center, false);
+		}
+		
 		String scoreString = String.format("Score: %d", pacman.getScore());
 		app.smallUIFont.draw(app.batch, scoreString, 10, Gdx.graphics.getHeight() - 50, 100f, Align.left, false);
 		app.smallUIFont.draw(app.batch, "Lives: ", 10, 50);
 
 		if (gameOver) {
+			app.bigUIFont.setColor(new Color(0xed4747ff));
 			app.bigUIFont.draw(app.batch, "GAME OVER!", Gdx.graphics.getWidth() / 2 - 25f, Gdx.graphics.getHeight() / 2,
 					50, Align.center, false);
 		}
@@ -184,6 +190,7 @@ public class MainScreen implements Screen {
 		if (!entitySetup) {
 			float[] offset = grid.getOffset();
 			TextureAtlas t = new TextureAtlas(Gdx.files.internal("pacman.atlas"));
+			app.log("8: %d", remainingLives);
 
 			pacman = new Player(app, grid, t, 13, 6, grid.getSize(), grid.getSize(), offset);
 			pinky = new Pinky(app, grid, t.findRegions("pinky"), t.findRegions("f"), eyes, 14, 15, grid.getSize(),
@@ -194,10 +201,14 @@ public class MainScreen implements Screen {
 					grid.getSize(), offset);
 			clyde = new Clyde(app, grid, t.findRegions("clyde"), t.findRegions("f"), eyes, 11, 15, grid.getSize(),
 					grid.getSize(), offset);
+			pacman.setScore(scoreOffset);
 			entitySetup = true;
+			remainingLives = livesSave;
+			app.log("9: %d", remainingLives);
 		}
 
 		if (grid.pelletCount() <= 0 && !won) {
+			livesSave = remainingLives - 1;
 			won = true;
 			time3 = System.currentTimeMillis();
 			pacman.die();
@@ -205,13 +216,10 @@ public class MainScreen implements Screen {
 
 		if (grid.pelletCount() <= 0 && System.currentTimeMillis() - time3 > 3000 && won) {
 			won = false;
+			scoreOffset = pacman.getScore();
 			resetReady();
-			remainingLives = 5;
 			grid = new TileGrid(app, 29, 26);
-			pinky.reset();
-			clyde.reset();
-			inky.reset();
-			blinky.reset();
+			entitySetup = false;
 		}
 
 		// check to see if the game has started

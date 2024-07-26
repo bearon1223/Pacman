@@ -23,7 +23,7 @@ public class Inky extends Entity {
 				Vector2 targetLoc = pacmanLocation.cpy().sub(blink.getLocation()).scl(2).add(blink.getLocation());
 				super.update(targetLoc, 0);
 			} else if(!scatter)
-				super.update(new Vector2(0, 0), 0);
+				super.update(new Vector2(Gdx.graphics.getWidth(), 0), 0);
 			else if (scatter)
 				super.update(new Vector2(Gdx.graphics.getWidth(), 0),0);
 		}

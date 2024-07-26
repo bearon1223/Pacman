@@ -20,7 +20,7 @@ public class Pinky extends Entity {
 			super.update(pacman.getTileAhead(5).getLocationAsVector(grid.getSize(), grid.getOffset()[0],
 					grid.getOffset()[1]), 1);
 		else if (!scatter)
-			super.update(new Vector2(0, 0), 0);
+			super.update(new Vector2(0, Gdx.graphics.getHeight()), 0);
 		else if (scatter)
 			super.update(new Vector2(0, Gdx.graphics.getHeight()), 0);
 	}
