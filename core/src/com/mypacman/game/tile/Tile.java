@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -19,7 +20,7 @@ public class Tile {
 	private TextureRegion t;
 
 	public Tile(int row, int col, boolean isWall, boolean hasPellet, boolean isJunction, boolean isInvalid,
-			boolean isSuperPellet) {
+			boolean isSuperPellet, AtlasRegion pill, AtlasRegion superPill) {
 		this.row = row;
 		this.col = col;
 		this.isWall = isWall;
@@ -29,10 +30,10 @@ public class Tile {
 		this.isInvalid = isInvalid;
 		this.isSuperPellet = isSuperPellet;
 
-		if (isSuperPellet)
-			this.t = new TextureRegion(new Texture(Gdx.files.internal("map/big-0.png")));
+		if (!isSuperPellet)
+			this.t = pill;
 		else
-			this.t = new TextureRegion(new Texture(Gdx.files.internal("map/pill.png")));
+			this.t = superPill;
 
 		b = new Button(0, 0, 10, 10);
 	}

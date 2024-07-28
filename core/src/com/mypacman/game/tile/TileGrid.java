@@ -2,6 +2,7 @@ package com.mypacman.game.tile;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.mypacman.game.Pacman;
@@ -11,7 +12,7 @@ public class TileGrid {
 	private int rowCount, colCount;
 	private float offsetX, offsetY;
 
-	public TileGrid(Pacman app, int rowCount, int colCount) {
+	public TileGrid(Pacman app, int rowCount, int colCount, AtlasRegion pill, AtlasRegion superPill) {
 		grid = new Tile[rowCount * colCount];
 		for (int i = 0; i < rowCount; i++) { // row
 			for (int j = 0; j < colCount; j++) { // col
@@ -19,7 +20,7 @@ public class TileGrid {
 						Maps.pacmanMap[i * colCount + j] == 0 || Maps.pacmanMap[i * colCount + j] == 3 ? true : false,
 						Maps.pacmanMap[i * colCount + j] == 3 ? true : false,
 						Maps.pacmanMap[i * colCount + j] == 4 ? true : false,
-						Maps.pacmanMap[i * colCount + j] == 5 ? true : false);
+						Maps.pacmanMap[i * colCount + j] == 5 ? true : false, pill, superPill);
 			}
 		}
 		app.log("Generating Grid (size: %d)", grid.length);
@@ -96,8 +97,8 @@ public class TileGrid {
 			return grid[row * colCount + col];
 		}
 		if (row == 15)
-			return new Tile(-1, -1, false, false, false, true, false);
-		return new Tile(-1, -1, true, false, false, true, false);
+			return new Tile(-1, -1, false, false, false, true, false, null, null);
+		return new Tile(-1, -1, true, false, false, true, false, null, null);
 	}
 
 	/**

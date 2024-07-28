@@ -127,6 +127,7 @@ public abstract class Entity {
 		int col = locationToTile().getLocation()[1];
 
 		if (inBox && isAlive) {
+			isScared = false;
 			travel(grid.getTile(18, 11 + junction * 3));
 			if (locationToTile() == grid.getTile(18, 11 + junction * 3)) {
 				inBox = false;
@@ -393,21 +394,22 @@ public abstract class Entity {
 	public void render(SpriteBatch batch, Player pacman, float timeLeft) {
 		TextureRegion regularFrame = defaultAnimation.getKeyFrame(stateTime, true);
 		TextureRegion scaredFrame = scaredAnimation.getKeyFrame(stateTime, true);
-		TextureRegion defaultScared = scaredAnimation.getKeyFrame(0);
 		stateTime += 0.002f;
 
 		if (isAlive) {
-			if (isScared && timeLeft > 10000)
+			if (!inBox && isScared && timeLeft > 10000)
 				batch.draw(scaredFrame, location.x, location.y, w, h);
-			else if (isScared) {
-				batch.draw(defaultScared, location.x, location.y, w, h);
+			else if (!inBox && isScared) {
+				// loop the animation just before the white flashing bits
+				stateTime = Math.clamp(stateTime % (2 * 0.033f), 0, 2 * 0.033f);
+				batch.draw(scaredFrame, location.x, location.y, w, h);
 			} else {
 				batch.draw(regularFrame, location.x, location.y, w, h);
 			}
 		}
 
 		// Depending on direction of movement, draw the appropriate eyes
-		if (!isScared) {
+		if (!isScared || inBox) {
 			if (UP) {
 				batch.draw(eyesUp, location.x, location.y, w, h);
 			} else if (DOWN) {

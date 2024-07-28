@@ -157,8 +157,10 @@ public class Player {
 
 		// score
 		if (currentLocation.hasPellet()) {
-			if (currentLocation.hasSuperPellet())
+			if (currentLocation.hasSuperPellet()) {
 				screen.setEatGhosts(true);
+				score += 40;
+			}
 			currentLocation.removePellet();
 			pelletsCollected++;
 		}

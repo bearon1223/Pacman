@@ -33,7 +33,7 @@ public class MainScreen implements Screen {
 	public Pinky pinky;
 	public Inky inky;
 	public Clyde clyde;
-	private Texture map, lives;
+	private AtlasRegion map, lives;
 	private boolean entitySetup = false, invencible = false, eatingGhostMode = false;
 	private Player pacman;
 	private final Array<AtlasRegion> eyes;
@@ -44,17 +44,17 @@ public class MainScreen implements Screen {
 	private int remainingLives = 3;
 	private int livesSave = 3;
 	private int scoreOffset = 0;
+	private final TextureAtlas t = new TextureAtlas(Gdx.files.internal("pacman.atlas"));
 
 	public MainScreen(Pacman app) {
 		this.app = app;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false);
 
-		grid = new TileGrid(app, 29, 26);
+		grid = new TileGrid(app, 29, 26, t.findRegion("pill"), t.findRegion("big-0"));
 		app.debugWindow.setMainScreen(this);
 
 		float[] offset = { 30, 130 };
-		TextureAtlas t = new TextureAtlas(Gdx.files.internal("pacman.atlas"));
 
 		eyes = new Array<>();
 		eyes.add(t.findRegion("u"));
@@ -68,8 +68,8 @@ public class MainScreen implements Screen {
 		clyde = new Clyde(app, grid, t.findRegions("clyde"), t.findRegions("f"), eyes, 0, 0, 0, 0, offset);
 		pacman = new Player(app, grid, t, 13, 6, grid.getSize(), grid.getSize(), offset);
 
-		map = new Texture(Gdx.files.internal("map/map.png"));
-		lives = new Texture(Gdx.files.internal("pacman/move_1.png"));
+		map = t.findRegion("map");
+		lives = t.findRegion("move", 1);
 	}
 
 	@Override
@@ -189,8 +189,6 @@ public class MainScreen implements Screen {
 		// setup entities again because they do be buggy if I don't
 		if (!entitySetup) {
 			float[] offset = grid.getOffset();
-			TextureAtlas t = new TextureAtlas(Gdx.files.internal("pacman.atlas"));
-			app.log("8: %d", remainingLives);
 
 			pacman = new Player(app, grid, t, 13, 6, grid.getSize(), grid.getSize(), offset);
 			pinky = new Pinky(app, grid, t.findRegions("pinky"), t.findRegions("f"), eyes, 14, 15, grid.getSize(),
@@ -204,11 +202,10 @@ public class MainScreen implements Screen {
 			pacman.setScore(scoreOffset);
 			entitySetup = true;
 			remainingLives = livesSave;
-			app.log("9: %d", remainingLives);
 		}
 
 		if (grid.pelletCount() <= 0 && !won) {
-			livesSave = remainingLives - 1;
+			livesSave = remainingLives;
 			won = true;
 			time3 = System.currentTimeMillis();
 			pacman.die();
@@ -218,7 +215,7 @@ public class MainScreen implements Screen {
 			won = false;
 			scoreOffset = pacman.getScore();
 			resetReady();
-			grid = new TileGrid(app, 29, 26);
+			grid = new TileGrid(app, 29, 26, t.findRegion("pill"), t.findRegion("big-0"));
 			entitySetup = false;
 		}
 
@@ -299,9 +296,8 @@ public class MainScreen implements Screen {
 		grid.dispose();
 		pinky.dispose();
 		blinky.dispose();
-		lives.dispose();
-		map.dispose();
 		pacman.dispose();
+		t.dispose();
 	}
 
 }
